@@ -1,0 +1,52 @@
+package com.parasoft.parabank.web.controller;
+
+import javax.servlet.http.*;
+
+import org.springframework.stereotype.*;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.*;
+import org.springframework.web.servlet.view.*;
+
+import com.parasoft.parabank.util.*;
+
+/**
+ * Controller for logging out a customer
+ */
+@Controller("/logout.htm")
+@RequestMapping("/logout.htm")
+public class LogoutController extends AbstractBankController {
+
+    @RequestMapping
+    public ModelAndView handleRequest(final HttpServletRequest request) throws Exception {
+        HttpSession session = request.getSession(false);
+        Object connType = "JDBC";
+        if (session != null) {
+            connType = session.getAttribute("ConnType");
+            //session.removeAttribute(Constants.USERSESSION); redundant the next statement does this auto-magically ;-)
+            session.invalidate();
+        }
+        session = request.getSession(true);
+        //request.getSession().setAttribute("ConnType",connType );
+        //final ServletRequestAttributes attr =
+        //(ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
+        //final HttpSession newSession = attr.getRequest().getSession();
+        session.setAttribute("ConnType", connType);
+        final ModelAndView mav = new ModelAndView(new RedirectView("/index.htm", true));
+        mav.addObject("ConnType", connType);
+        //response.sendRedirect("index.htm");
+        return mav;
+    }
+    //    public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
+    //        request.getSession().removeAttribute(Constants.USERSESSION);
+    //        request.getSession().invalidate();
+    //        request.getSession().setAttribute("ConnType", request.getSession().getAttribute("ConnType"));
+    //        response.sendRedirect("index.htm");
+    //        return null;
+    //    }
+
+    @Override
+    public void setAccessModeController(final AccessModeController aAccessModeController) {
+        // TODO Auto-generated method stub
+
+    }
+}
